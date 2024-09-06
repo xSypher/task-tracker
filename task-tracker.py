@@ -6,22 +6,21 @@ import functions as func
 ARGV = sys.argv[1:]
 COMMAND = ARGV[0]
 JSON_FILE = "tasks.json"
-ID = func.get_ids(JSON_FILE) # List for the tasks' IDs
 
 #Create the json file if doesn't exists
 try:
     open(JSON_FILE, "x")
     with open(JSON_FILE, "w") as json:
-        json.write('{')
-        json.write('\n}')
+        json.write('[\n]')
 except FileExistsError:
     pass
 
+ID = func.get_ids() # List for the tasks' IDs
 #---------- MAIN LOGIC ----------#
 
 if COMMAND == "add":
     try:
-        print(func.add(ARGV, len(ID), JSON_FILE))
+        print(func.add(ARGV, len(ID)+1))
     except IndexError as err:
         print(err)
     except ValueError as err:
