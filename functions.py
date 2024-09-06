@@ -18,35 +18,25 @@ def get_ids() -> list:
 
 def add(args: list, id: int):
 
-    #check if a description exists and whether it's an integer.
-    try:
-        argument = int(args[1])
-        raise ValueError(f"ERROR: Invalid argument: {argument}")
+    task = {"ID": id, "description": args[1], "status": "Todo", "createdAt": TODAY, "updatedAt": "None"}
+
+    #check if there are already tasks in the file and then agregate a ',' to add another object(task)
+    with open(JSON_FILE, "r") as json:
+        lines = json.readlines()
+        if count_lines := len(lines) > 2:
+            lines[count_lines-3] = '\t},\n'
+            
+    #remove the last line with the ']' character and then added the new task
+    lines.pop()
+    lines.append('\t{\n')
+    for k, v in task.items():
+        if k != "updatedAt":
+            lines.append(f'\t\t"{k}": "{v}",\n')
+    lines.append(f'\t\t"{k}": "{v}"\n')
+    lines.append('\t}\n')
+    lines.append(']')
     
-    except IndexError:
-        raise IndexError("ERROR: Description is missing.")
-
-    except ValueError: #Value error means that the description is a str and that's what we want
-        task = {"ID": id, "description": args[1], "status": "Todo", "createdAt": TODAY, "updatedAt": "None"}
-
-        #check if there are already tasks in the file and then agregate a ',' to add another object(task)
-        with open(JSON_FILE, "r") as json:
-            lines = json.readlines()
-            if count_lines := len(lines) > 2:
-                lines[count_lines-3] = '\t},\n'
-                
-        
-        #remove the last line with the ']' character and then added the new task
-        lines.pop()
-        lines.append('\t{\n')
-        for k, v in task.items():
-            if k != "updatedAt":
-                lines.append(f'\t\t"{k}": "{v}",\n')
-        lines.append(f'\t\t"{k}": "{v}"\n')
-        lines.append('\t}\n')
-        lines.append(']')
-
-        #finally rewrite the json file
-        with open(JSON_FILE, "w") as json:
-            json.writelines(lines)
-        return f"Task added succesfully (ID: {id})"
+    #finally rewrite the json file
+    with open(JSON_FILE, "w") as json:
+        json.writelines(lines)
+    return f"Task added succesfully (ID: {id})"

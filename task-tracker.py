@@ -20,11 +20,15 @@ ID = func.get_ids() # List for the tasks' IDs
 
 if COMMAND == "add":
     try:
+        #check if a description exists and whether it's an integer.
+        argument = int(ARGV[1])
+        print(f"ERROR: Invalid argument: {argument}")
+    
+    except IndexError:
+        print("ERROR: Description is missing.")
+
+    except ValueError: #Value error means that the description is a str and that's what we want
         print(func.add(ARGV, len(ID)+1))
-    except IndexError as err:
-        print(err)
-    except ValueError as err:
-        print(err)
 
 elif COMMAND == "update":
     try:
