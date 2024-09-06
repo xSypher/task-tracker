@@ -35,7 +35,6 @@ def add(args: list, id: int):
             if count_lines := len(lines) > 2:
                 lines[count_lines-3] = '\t},\n'
                 
-        
         #remove the last line with the ']' character and then added the new task
         lines.pop()
         lines.append('\t{\n')
