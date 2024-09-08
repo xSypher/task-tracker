@@ -6,6 +6,7 @@ import functions as func
 ARGV = sys.argv[1:]
 COMMAND = ARGV[0]
 ID = func.get_ids()
+NEXT_ID = len(ID) + 1
 
 
 # Create the json file if doesn't exists
@@ -17,10 +18,10 @@ if COMMAND == "add":
     try:
         # check if a description exists and whether it's an integer.
         description = ARGV[1]
-        if isinstance(description, int):
+        if description.isdigit():
             raise ValueError(f"ERROR: Ivalid description: {description}.")
 
-        print(func.add_task(description, str(len(ID) + 1)))
+        print(func.add_task(description, NEXT_ID))
 
     except IndexError:
         print("ERROR: Description is missing.")
@@ -32,8 +33,8 @@ if COMMAND == "add":
 elif COMMAND == "update":
     # checking ID
     try:
-        if ARGV[1] not in func.get_ids():
-            raise ValueError("ERROR: Invalid ID.")
+        if (id := ARGV[1]) not in ID:
+            raise ValueError(f"ERROR: Invalid ID: {id}")
     except ValueError as err:
         print(err)
     except IndexError:
@@ -41,9 +42,8 @@ elif COMMAND == "update":
 
     # checking description
     try:
-        description = ARGV[2]
-        if isinstance(description, int):
-            raise ValueError(f"ERROR: Invalid description: {description}")
+        if (description := ARGV[2]).isdigit():
+            raise ValueError(f"ERROR: Invalid description: ({description})")
 
         print(func.update_task(ARGV[1], ARGV[2]))
 
