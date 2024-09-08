@@ -1,47 +1,57 @@
-#Task Tracker CLI in python to my backend projects
-import sys 
+# Task Tracker CLI in python to my backend projects
+import sys
 import functions as func
 
-#--------------- SOME CONSTANTS ---------------#
+# --------------- SOME CONSTANTS ---------------#
 ARGV = sys.argv[1:]
 COMMAND = ARGV[0]
-JSON_FILE = "tasks.json"
+ID = func.get_ids()
 
-#Create the json file if doesn't exists
-try:
-    open(JSON_FILE, "x")
-    with open(JSON_FILE, "w") as json:
-        json.write('[\n]')
-except FileExistsError:
-    pass
 
-ID = func.get_ids() # List for the tasks' IDs
-#---------- MAIN LOGIC ----------#
+# Create the json file if doesn't exists
+func.create_json()
+
+# ---------- MAIN LOGIC ----------#
 
 if COMMAND == "add":
     try:
-        #check if a description exists and whether it's an integer.
-        argument = int(ARGV[1])
-        print(f"ERROR: Invalid argument: {argument}")
-    
+        # check if a description exists and whether it's an integer.
+        description = ARGV[1]
+        if isinstance(description, int):
+            raise ValueError(f"ERROR: Ivalid description: {description}.")
+
+        print(func.add_task(description, str(len(ID) + 1)))
+
     except IndexError:
         print("ERROR: Description is missing.")
 
-    except ValueError: #Value error means that the description is a str and that's what we want
-        print(func.add(ARGV, len(ID)+1))
+    # Value error means that the description is valid
+    except ValueError as err:
+        print(err)
 
 elif COMMAND == "update":
+    # checking ID
     try:
-        int(ARGV[1]) #check if ARGV[1] is a valid ID(integer).
-        ARGV[2] #check if there's a description.
-        if len(ARGV) == 3 and ARGV[2] == str:
-            update(ARGV[1], ARGV[2])
-    except ValueError:
-        print(f"ERROR: Invalid ID argument: {ARGV[1]}")
+        if ARGV[1] not in func.get_ids():
+            raise ValueError("ERROR: Invalid ID.")
+    except ValueError as err:
+        print(err)
     except IndexError:
-        print("ERROR: description is missing.") 
-    else:
-        print(f"ERROR: Invalid argument: {ARGV.pop()}")
+        print("ERROR: Missing ID")
+
+    # checking description
+    try:
+        description = ARGV[2]
+        if isinstance(description, int):
+            raise ValueError(f"ERROR: Invalid description: {description}")
+
+        print(func.update_task(ARGV[1], ARGV[2]))
+
+    except IndexError:
+        print("ERROR: Missing description")
+    except ValueError as err:
+        print(err)
+
 
 elif COMMAND == "delete":
     pass
@@ -59,16 +69,4 @@ else:
     print(f"Invalid command: {COMMAND}")
 
 
-
-
-
-#------------------ FUNCTIONS ------------------#
-
-
-
-
-
-
-
-
-    
+# ------------------ FUNCTIONS ------------------#
