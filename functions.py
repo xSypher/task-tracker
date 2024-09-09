@@ -27,6 +27,34 @@ def create_json() -> None:
         with open(JSON_FILE, 'w') as json_file:
             json_file.write('{\n}')
 
+
+def check_id(argv, ids) -> bool:
+    try:
+        id = argv[1]
+        if id not in ids:
+            raise ValueError(f"ERROR: Invalid ID: {id}")
+        return True
+    
+    except IndexError:
+        print("ERROR: Missing ID.")
+        return False
+
+    except ValueError as err:
+        print(err)
+        return False
+
+
+def check_description(argv) -> bool:
+    try:
+        if (description := argv[1]).isdigit():
+            raise ValueError(f"ERROR: Ivalid description: {description}.")
+
+        return True
+
+    except ValueError as err:
+        print(err)
+        return False
+
     
 
 #-------------- MAIN FUNCTIONS ---------------#
