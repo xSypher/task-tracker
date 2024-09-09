@@ -13,54 +13,79 @@ def get_ids() -> list:
     ids = []
 
     with open(JSON_FILE, "r") as json_file:
-        for line in json.load(json_file):
-            ids.append(line["ID"])
+        try:
+            for task in json.load(json_file):
+                ids.append(task)
+        except json.decoder.JSONDecodeError:
+            return("ERROR: Something is wrong with the JSON file.")
     
     return ids
 
 
-def create_json():
+def create_json() -> None:
     if not JSON_FILE.exists():
         with open(JSON_FILE, 'w') as json_file:
-            json_file.write('[\n]')
+            json_file.write('{\n}')
 
     
 
 #-------------- MAIN FUNCTIONS ---------------#
-def add(description: str) -> str:
-    id = len(get_ids()) + 1
+def add_task(description: str, id: str) -> None:
     task = {
-        "ID": id,
         "description": description,
         "status": "Todo",
         "createdAt": TODAY,
         "updatedAt": "None",
     }
 
-    with open(JSON_FILE, 'r') as json_file:
-        try:
+    try:
+        with open(JSON_FILE, 'r') as json_file:
             tasks = json.load(json_file)
-        except json.JSONDecodeError:
-            return "ERROR: Something is wrong with the json file."
+    
+    except json.decoder.JSONDecodeError:
+        return "ERROR: Something is wrong with the json file."
     
     with open(JSON_FILE, 'w') as json_file:
-        tasks.append(task)
+        tasks[f"{id}"] = task
         json.dump(tasks, json_file, indent=4)
 
-    return f"Task added succesfully. (ID: {id})"
+    print(f"Task added succesfully. (ID: {id})")
 
 
-def update(id: str, description: str) -> str:
-    with open(JSON_FILE, 'r') as json_file:
-        tasks = json.load(json_file)
-        
-        for task in tasks:
-            if task["ID"] == id:
-                task["description"] = description
-                task["updatedAt"] = TODAY
+def update_task(id: str, description: str) -> None:
+    try:
+        with open(JSON_FILE, 'r') as json_file:
+            tasks = json.load(json_file)
+            for task_id, task in tasks.items():
+                if task_id == id:
+                    task["description"] = description
+                    task["updatedAt"] = TODAY
+                    break
+    
+    except json.decoder.JSONDecodeError:
+        print("ERROR: Something is wrong with the JSON file.")
 
     with open(JSON_FILE, 'w') as json_file:
         json.dump(tasks, json_file, indent=4)
-    return f"Task updated succesfully. (ID: {id})"
+    
+    print(f"Task updated succesfully. (ID: {id})")
+
+
+def delete_task(id) -> None:
+    try:
+        with open(JSON_FILE, 'r') as json_file:
+                tasks = json.load(json_file)
+                tasks.pop(id)
+        
+        with open(JSON_FILE, 'w') as json_file:
+            json.dump(tasks, json_file, indent=4)
+
+        print(f"Task deleted succesfully.")
+    
+    except json.decoder.JSONDecodeError:
+        print("ERROR: Something is wrong with the JSON file.")
+
+            
+                
 
     
