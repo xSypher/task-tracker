@@ -16,12 +16,17 @@ NEXT_ID = str(len(IDV) + 1)
 
 def task_tracker():
     if COMMAND == "add":
+        
         try:
             description = ARGV[1]
-            if func.check_description() == True:
+            if func.check_description(description) == True:
                 func.add_task(description, NEXT_ID)
+        
+        except IndexError:
+            print("ERROR: Missing description.")
 
     elif COMMAND == "update":
+        
         try:
             id = ARGV[1]
             if func.check_id(id, IDV) == True:
