@@ -28,25 +28,20 @@ def create_json() -> None:
             json_file.write('{\n}')
 
 
-def check_id(argv, ids) -> bool:
+def check_id(id, ids) -> bool:
     try:
-        id = argv[1]
         if id not in ids:
             raise ValueError(f"ERROR: Invalid ID: {id}")
         return True
-    
-    except IndexError:
-        print("ERROR: Missing ID.")
-        return False
 
     except ValueError as err:
         print(err)
         return False
 
 
-def check_description(argv) -> bool:
+def check_description(description) -> bool:
     try:
-        if (description := argv[1]).isdigit():
+        if description.isdigit():
             raise ValueError(f"ERROR: Ivalid description: {description}.")
 
         return True
@@ -113,7 +108,66 @@ def delete_task(id) -> None:
     except json.decoder.JSONDecodeError:
         print("ERROR: Something is wrong with the JSON file.")
 
+
+def mark_in_progress(id) -> None:
+    try:
+        with open(JSON_FILE, 'r') as json_file:
+            tasks = json.load(json_file)
+            tasks[id]["status"] = "in-progress"
+            tasks[id]["updatedAt"] = TODAY
             
+        with open(JSON_FILE, 'w') as json_file:
+            json.dump(tasks, json_file, indent=4)
+        
+        print("Task marked successfully.")      
+    
+    except json.decoder.JSONDecodeError:
+        print("ERROR: Something is wrong with the JSON file.")
                 
 
+def mark_done(id) -> None:
+    try:
+        with open(JSON_FILE, 'r') as json_file:
+            tasks = json.load(json_file)
+            tasks[id]["status"] = "Done"
+            tasks[id]["updatedAt"] = TODAY
+            
+        with open(JSON_FILE, 'w') as json_file:
+            json.dump(tasks, json_file, indent=4)
+        
+        print("Task marked successfully.")      
     
+    except json.decoder.JSONDecodeError:
+        print("ERROR: Something is wrong with the JSON file.")
+
+
+def list_task(status) -> None:
+    
+    try:
+        with open(JSON_FILE, 'r') as json_file:
+            tasks = json.load(json_file)
+    
+    except json.decoder.JSONDecodeError:
+        print("ERROR: Something is wrong with the JSON file.")
+        
+    
+    if status == None:
+        for task_id, task in tasks.items():
+            print(f"id: {task_id}")
+            for k, v in task.items():
+                print(f"{k}: {v}")
+            print("-"*25)
+    
+    elif status == "todo" or status == "done" or status == "in-progress":
+        for task_id, task in tasks.items():
+            if task["status"].lower() == status:
+                print(f"id: {task_id}")
+                for k, v in task.items():
+                    print(f"{k}: {v}")
+                print("-"*25)
+    
+    else:
+        print(f"ERROR: Invalid status: <{status}>.")
+
+        
+        

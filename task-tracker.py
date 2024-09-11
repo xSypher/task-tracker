@@ -15,6 +15,7 @@ NEXT_ID = str(len(IDV) + 1)
 # ---------- MAIN LOGIC ----------#
 
 def task_tracker():
+    
     if COMMAND == "add":
         
         try:
@@ -53,14 +54,33 @@ def task_tracker():
             print("ERROR: Missing ID.")
     
     elif COMMAND == "mark-in-progress":
-        pass
+        try:
+            id = ARGV[1]
+            if func.check_id(id, IDV) == True:
+                func.mark_in_progress(id)
+        
+        except IndexError:
+            print("ERROR: Missing ID.")
 
     elif COMMAND == "mark-done":
-        pass
+        try:
+            id = ARGV[1]
+            if func.check_id(id, IDV) == True:
+                func.mark_done(id)
+        
+        except IndexError:
+            print("ERROR: Missing ID.")
 
     elif COMMAND == "list":
-        pass
-
+        
+        try:
+            status = ARGV[1]
+        
+        except IndexError:
+            status = None
+            
+        func.list_task(status)
+        
     else:
         print(f"Invalid command: {COMMAND}")
 
