@@ -9,79 +9,69 @@ func.create_json()
 # --------------- SOME CONSTANTS ---------------#
 ARGV = sys.argv[1:]
 COMMAND = ARGV[0]
-IDV = func.get_ids()
-NEXT_ID = str(len(IDV) + 1)
 
 # ---------- MAIN LOGIC ----------#
 
+
 def task_tracker():
-    
+
+    if COMMAND not in [
+        "add",
+        "update",
+        "delete",
+        "mark-in-progress",
+        "mark-done",
+        "list",
+    ]:
+        print(f"ERROR: Invalid command {COMMAND}")
+        return
+
     if COMMAND == "add":
-        
-        try:
-            description = ARGV[1]
-            if func.check_description(description) == True:
-                func.add_task(description, NEXT_ID)
-        
-        except IndexError:
-            print("ERROR: Missing description.")
+
+        description = func.check_args(1, ARGV, "description")
+        if description and func.check_description(description):
+            func.add_task(description)
 
     elif COMMAND == "update":
-        
-        try:
-            id = ARGV[1]
-            if func.check_id(id, IDV) == True:
-                func.update_task(ARGV[1], ARGV[2])
-        
-        except IndexError:
-            print("ERROR: Missing ID.")
 
-        try:
-            description = ARGV[2]
-            if func.check_description(description) == True:
-                func.update_task(id, description)
-        
-        except IndexError:
-            print("ERROR: Missing description.")
-            
+        id = func.check_args(1, ARGV, "ID")
+        description = func.check_args(2, ARGV, "description")
+        if (
+            id
+            and func.check_id(id, COMMAND)
+            and description
+            and func.check_description(description)
+        ):
+            func.update_task(id, description)
+
     elif COMMAND == "delete":
-        try:
-            id = ARGV[1]
-            if func.check_id(id, IDV) == True:
-                func.delete_task(id)
-        
-        except IndexError:
-            print("ERROR: Missing ID.")
-    
+
+        id = func.check_args(1, ARGV, "ID")
+        if id and func.check_id(id, COMMAND):
+            func.delete_task(id)
+
     elif COMMAND == "mark-in-progress":
-        try:
-            id = ARGV[1]
-            if func.check_id(id, IDV) == True:
-                func.mark_in_progress(id)
         
-        except IndexError:
-            print("ERROR: Missing ID.")
+        id = func.check_args(1, ARGV, "ID")
+        if id and func.check_id(id, COMMAND):
+            func.mark_in_progress(id)
 
     elif COMMAND == "mark-done":
-        try:
-            id = ARGV[1]
-            if func.check_id(id, IDV) == True:
-                func.mark_done(id)
-        
-        except IndexError:
-            print("ERROR: Missing ID.")
+
+        id = func.check_args(1, ARGV, "ID")
+        if id and func.check_id(id, COMMAND):
+            func.mark_done(id)
 
     elif COMMAND == "list":
-        
+
         try:
             status = ARGV[1]
-        
+
         except IndexError:
             status = None
-            
-        func.list_task(status)
-        
-    else:
-        print(f"Invalid command: {COMMAND}")
 
-task_tracker()
+        func.list_task(status)
+
+
+if __name__ == "__main__":
+    task_tracker()
