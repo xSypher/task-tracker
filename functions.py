@@ -4,14 +4,72 @@ from pathlib import Path
 
 
 # -------- CONSTANTS ----------#
-TODAY = date.today().__str__()
+TODAY = date.today().strftime("%m/%d/%y")
 JSON_FILE = Path("tasks.json")
 
 
+# -------------- MAIN FUNCTIONS ---------------#
+def add_task(description: str) -> None:
+
+    id = len(get_ids()) + 1
+    task = {
+        "description": description,
+        "status": "Todo",
+        "createdAt": TODAY,
+        "updatedAt": "None",
+    }
+
+    tasks = load_tasks()
+    tasks[f"{id}"] = task
+    save_tasks(tasks)
+    print(f"Task added succesfully. (ID: {id})")
+
+
+def update_task(id: str, description: str) -> None:
+    
+    tasks = load_tasks()
+    tasks[id]["description"] = description
+    tasks[id]["udpateAt"] = TODAY
+    save_tasks(tasks)
+    print(f"Task updated succesfully. (ID: {id})")
+
+
+def delete_task(id: str) -> None:
+   
+    tasks = load_tasks()
+    tasks.pop(id)
+    save_tasks(tasks)
+    print(f"Task deleted succesfully.")
+
+
+def mark_task(id: str, status: str) -> None:
+    
+    tasks = load_tasks()
+    tasks[id]["status"] = status
+    tasks[id]["updatedAt"] = TODAY
+    save_tasks(tasks)
+    print("Task marked succesfully.")
+        
+
+def list_task(status: str | None) -> None:
+    
+    tasks = load_tasks(status)
+    try:
+        if len(tasks) == 0:
+            print("There's no tasks to list.")
+            return
+    
+        elif len(tasks) > 0:
+            for id, task in tasks.items():
+                print(f'ID: {id}, description: {task["description"]}, status: {task["status"]}, ', end='')
+                print(f'createdAt: {task["createdAt"]}, updatedAt: {task["updatedAt"]}')
+                print("-"*100)
+    
+    except TypeError:
+        pass
+    
 # ---------- OTHERS FUNCTIONS----------#
 
-
-# get the ids fo the existing tasks
 def get_ids() -> list:
     ids = []
 
@@ -71,121 +129,38 @@ def check_description(description: str) -> bool:
     except ValueError as err:
         print(err)
         return False
+    
 
-
-# -------------- MAIN FUNCTIONS ---------------#
-def add_task(description: str) -> None:
-
-    id = len(get_ids()) + 1
-    task = {
-        "description": description,
-        "status": "Todo",
-        "createdAt": TODAY,
-        "updatedAt": "None",
-    }
-
+def load_tasks(status: str | None) -> dict:
+    
+    tasks = {}
+    
+    if status not in ["in-progress", "done", "todo"] and status != None:
+        print(f"ERROR: Invalid status <{status}>")
+        return None
+    
     try:
-        with open(JSON_FILE, "r") as json_file:
+        with open(JSON_FILE, 'r') as json_file:
+            
             tasks = json.load(json_file)
-
-    except json.decoder.JSONDecodeError:
-        return "ERROR: Something is wrong with the json file."
-
-    with open(JSON_FILE, "w") as json_file:
-        tasks[f"{id}"] = task
-        json.dump(tasks, json_file, indent=4)
-
-    print(f"Task added succesfully. (ID: {id})")
-
-
-def update_task(id: str, description: str) -> None:
-    try:
-        with open(JSON_FILE, "r") as json_file:
-            tasks = json.load(json_file)
-            tasks[id]["description"] = description
-            tasks[id]["udpateAt"] = TODAY
-
-        with open(JSON_FILE, "w") as json_file:
-            json.dump(tasks, json_file, indent=4)
-            print(f"Task updated succesfully. (ID: {id})")
-
-    except json.decoder.JSONDecodeError:
-        print("ERROR: Something is wrong with the JSON file.")
-
-
-def delete_task(id: str) -> None:
-    try:
-        with open(JSON_FILE, "r") as json_file:
-            tasks = json.load(json_file)
-            tasks.pop(id)
-
-        with open(JSON_FILE, "w") as json_file:
-            json.dump(tasks, json_file, indent=4)
-
-        print(f"Task deleted succesfully.")
-
-    except json.decoder.JSONDecodeError:
-        print("ERROR: Something is wrong with the JSON file.")
-
-
-def mark_in_progress(id: str) -> None:
-    try:
-        with open(JSON_FILE, "r") as json_file:
-            tasks = json.load(json_file)
-            tasks[id]["status"] = "in-progress"
-            tasks[id]["updatedAt"] = TODAY
-
-        with open(JSON_FILE, "w") as json_file:
-            json.dump(tasks, json_file, indent=4)
-
-        print("Task marked successfully.")
-
-    except json.decoder.JSONDecodeError:
-        print("ERROR: Something is wrong with the JSON file.")
-
-
-def mark_done(id: str) -> None:
-    try:
-        with open(JSON_FILE, "r") as json_file:
-            tasks = json.load(json_file)
-            tasks[id]["status"] = "Done"
-            tasks[id]["updatedAt"] = TODAY
-
-        with open(JSON_FILE, "w") as json_file:
-            json.dump(tasks, json_file, indent=4)
-
-        print("Task marked successfully.")
-
-    except json.decoder.JSONDecodeError:
-        print("ERROR: Something is wrong with the JSON file.")
-
-
-def list_task(status: str) -> None:
-
-    try:
-        with open(JSON_FILE, "r") as json_file:
-            tasks = json.load(json_file)
-            if len(tasks) == 0:
-                print("There's no tasks to list.")
-                return
-
+            
             if status == None:
-                for task_id, task in tasks.items():
-                    print(f"id: {task_id}")
-                    for k, v in task.items():
-                        print(f"{k}: {v}")
-                    print("-" * 25)
-
-            elif status == "todo" or status == "done" or status == "in-progress":
-                for task_id, task in tasks.items():
-                    if task["status"].lower() == status:
-                        print(f"id: {task_id}")
-                        for k, v in task.items():
-                            print(f"{k}: {v}")
-                        print("-" * 25)
-
-            else:
-                print(f"ERROR: Invalid status: <{status}>.")
-
+                return tasks
+            
+            if len(tasks) > 0:
+                tasks = {id: task for id, task in tasks.items() if task["status"] == status}
+            
+            return tasks
+            
     except json.decoder.JSONDecodeError:
         print("ERROR: Something is wrong with the JSON file.")
+
+
+def save_tasks(tasks) -> None:
+    
+    try:
+        with open(JSON_FILE, 'w') as json_file:
+            json.dump(tasks, json_file, indent=4)
+            
+    except TypeError:
+        print("ERROR: Can't save the tasks, try again.")
