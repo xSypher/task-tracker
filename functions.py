@@ -1,3 +1,4 @@
+import os
 import json
 from datetime import date
 from pathlib import Path
@@ -5,8 +6,8 @@ from pathlib import Path
 
 # -------- CONSTANTS ----------#
 TODAY = date.today().strftime("%m/%d/%y")
-JSON_FILE = Path("tasks.json")
-
+dir_path = os.path.dirname(os.path.abspath(__file__))
+JSON_FILE = Path(str(dir_path) + "/tasks.json")
 
 # -------------- MAIN FUNCTIONS ---------------#
 def add_task(description: str) -> None:
@@ -60,10 +61,12 @@ def list_task(status: str | None) -> None:
             return
     
         elif len(tasks) > 0:
+            print("-"*40)
             for id, task in tasks.items():
-                print(f'ID: {id}, description: {task["description"]}, status: {task["status"]}, ', end='')
-                print(f'createdAt: {task["createdAt"]}, updatedAt: {task["updatedAt"]}')
-                print("-"*100)
+                print(f'ID: {id}')
+                for k, v in task.items():
+                    print(f"{k}: {v}")
+                print("-"*40)
     
     except TypeError:
         pass
@@ -131,7 +134,7 @@ def check_description(description: str) -> bool:
         return False
     
 
-def load_tasks(status: str | None) -> dict:
+def load_tasks(status=None) -> dict:
     
     tasks = {}
     
