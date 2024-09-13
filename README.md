@@ -8,7 +8,7 @@ task-cli keeps the tasks in a JSON file.
 __clone this respository__
 
 ```
-git clone https://github.com/xSypher/task-tracker`
+git clone https://github.com/xSypher/task-tracker
 ```
 
 # How to run the program
@@ -35,6 +35,7 @@ echo 'alias task-cli="~/path/to/task-tracker/task-cli.py"' >> .bashrc
 -----------------------------------------------------------
 # Usage:
 `task-cli <command> <parameters>`
+
 `./task-cli.py <command> <parameters> `
 
 
@@ -63,7 +64,7 @@ task-cli update 1 "buy somthing and cook"
 ```
 ---------------------------------------------------------
 
-### delete command
+### delete:
 this command deletes a task.
 ### usage:
 `task-cli delete <id>`
@@ -74,7 +75,7 @@ task-cli delete 1
 
 ---------------------------------------------------------
 
-### mark-in-progress command
+### mark-in-progress:
 this command marks as "in-progress" the status of a task.
 ### usage:
 `task-cli mark-in-progress <id>`
@@ -85,7 +86,7 @@ task-cli mark-in-progress 1
 
 ---------------------------------------------------------
 
-### mark-done command
+### mark-done:
 this command marks as "done" the status of a task.
 ### usage:
 `task-cli mark-done <id>`
@@ -96,7 +97,7 @@ task-cli mark-done 1
 
 ---------------------------------------------------------
 
-### list command
+### list:
 this command lists all tasks.
 ### usage:
 `task-cli list`
@@ -112,7 +113,6 @@ __status:__
 ### example:
 ``` 
 task-cli list
-
 
 task-cli list todo
 
