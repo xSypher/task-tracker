@@ -30,7 +30,7 @@ def update_task(id: str, description: str) -> None:
     
     tasks = load_tasks()
     tasks[id]["description"] = description
-    tasks[id]["udpateAt"] = TODAY
+    tasks[id]["updatedAt"] = TODAY
     save_tasks(tasks)
     print(f"Task updated succesfully. (ID: {id})")
 
