@@ -47,10 +47,12 @@ this command adds a task, it only receives non integers descriptions.
 ### example:
 ```
 task-cli add "buy something"
-```
-__good description: "cook"__
 
-__bad description: 1__
+output: Task added successfully. (ID: 1)
+```
+__valid description: "cook"__
+
+__invalid description: 1__
 
 ---------------------------------------------------------
 
